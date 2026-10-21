@@ -1,0 +1,4 @@
+#!/usr/bin/env python3
+from website_chatbot_benchmark.cli import main
+
+main()
