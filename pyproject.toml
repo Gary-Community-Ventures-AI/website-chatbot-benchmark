@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "website-chatbot-benchmark"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = ["ruamel.yaml>=0.18.6,<0.20"]
+dependencies = ["ruamel.yaml>=0.18.6,<0.20", "Flask>=3.1,<4"]
 
 [project.scripts]
 benchmark = "website_chatbot_benchmark.cli:main"
@@ -15,4 +15,4 @@ benchmark = "website_chatbot_benchmark.cli:main"
 include = ["website_chatbot_benchmark*"]
 
 [tool.setuptools.data-files]
-"share/website-chatbot-benchmark" = ["benchmark.example.yaml"]
+"share/website-chatbot-benchmark" = ["config.example.yaml"]

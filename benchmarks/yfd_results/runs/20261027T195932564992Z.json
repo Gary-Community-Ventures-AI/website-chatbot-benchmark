@@ -1,0 +1,549 @@
+{
+  "schema_version": 1,
+  "id": "240a9d3823144f32966040f3e2973d29",
+  "started_at": "2026-10-27T19:59:32.569026+00:00",
+  "updated_at": "2026-10-27T20:15:25.120122+00:00",
+  "status": "completed",
+  "target_url": "http://localhost:5173/",
+  "benchmark_id": "2ff9b6bd5604448d859ac5eebd4445d9",
+  "benchmark_sha256": "9f1ee6b5658f8893ef61e0445810edb7e9d3e136777bd07608831cbaf114e56e",
+  "config": {
+    "url": "http://localhost:5173/",
+    "models": {
+      "generation": "openai/gpt-6.1-sol",
+      "runner": "openai/gpt-6.1-terra"
+    },
+    "question_limit": null,
+    "page_limit": null,
+    "instructions": [
+      "Go through the screen and create a household that is eligible for all of the paths. Then use the information on the results screen to generate the questions for the chatbot. You should go through all paths on the results page to generate questions."
+    ],
+    "clarifications": [
+      {
+        "question": "The onboarding at http://localhost:5173/landing requires checking “I have read and agree to the Privacy Policy and the Terms of Use.” before “Get started.” I selected English and inspected this screen but have not accepted the agreement. Do you authorize accepting it for the fictional adult household so I can continue?",
+        "answer": "yes",
+        "target_url": "http://localhost:5173/"
+      }
+    ],
+    "agent_timeout_seconds": 600,
+    "browser_timeout_seconds": 60,
+    "response_timeout_seconds": 120,
+    "headed": false,
+    "interactive": true
+  },
+  "planned_questions": 66,
+  "results": [
+    {
+      "question_id": "question-0001",
+      "question": "What housing options do my results show?",
+      "answer": "Your results show three available paths:\n\n- Buy an open-market home: up to $364,398, with a $2,350 monthly cost at that price.\n- Buy an income-qualified home: up to $265,069, with a $1,650 monthly cost at that price.\n- Rent a lower-cost home: about $1,752 a month.\n\nYou can also stay in your current home at $2,200 a month. Want to learn more about income-qualified homes?",
+      "grade": "partially_correct",
+      "explanation": "Identifies all three paths but does not mention down payment help or the resale conditions."
+    },
+    {
+      "question_id": "question-0002",
+      "question": "How do the monthly costs of my options compare with what I pay now?",
+      "answer": "You pay $2,200 a month now. Compared with that:\n\n- Open-market home: $2,350, or $150 more.\n- Income-qualified home: $1,650, or $550 less.\n- Lower-cost rental: about $1,752, or $448 less.\n\nThe buying costs are for homes at your calculated maximum prices. Want to know what those buying costs include?",
+      "grade": "correct",
+      "explanation": "All three monthly costs and comparisons match the saved results."
+    },
+    {
+      "question_id": "question-0003",
+      "question": "How much cash would I need up front for each option?",
+      "answer": "Your results show these upfront costs:\n\n- Open-market home: $88,000.\n- Income-qualified home: $88,000.\n- Lower-cost rental: about $1,752.\n- Stay in your current home: $0.\n\nThe buying amounts include the down payment and closing costs at your calculated maximum prices. Want to know what closing costs are?",
+      "grade": "correct",
+      "explanation": "All three upfront amounts match the saved results."
+    },
+    {
+      "question_id": "question-0004",
+      "question": "What does equity mean?",
+      "answer": "Equity is the part of your home’s value that belongs to you. It’s the home’s value minus what you owe on it. Want to know how equity can grow over time?",
+      "grade": "correct",
+      "explanation": "Defines equity as home value minus debt owed."
+    },
+    {
+      "question_id": "question-0005",
+      "question": "How would my options compare for building equity over ten years?",
+      "answer": "After 10 years, your results project about $243,214 in equity for an open-market home and $129,126 for an income-qualified home. These amounts include your down payment, not just equity gained over 10 years.\n\nRenting or staying in your current rental would not build home equity. Want to know why the two buying projections differ?",
+      "grade": "correct",
+      "explanation": "Both ten-year projections and the lack of rental equity match the results."
+    },
+    {
+      "question_id": "question-0006",
+      "question": "What home price and size are within my estimated buying power?",
+      "answer": "Your estimated buying power is up to $364,398 for an open-market home or $265,069 for an income-qualified home. Your results don’t show what home sizes are available within those amounts.\n\nWant to know why the two price limits differ?",
+      "grade": "partially_correct",
+      "explanation": "The maximum purchase price is correct, but the answer says sizes are unavailable despite the saved results showing 1–2 bedrooms and 1 bathroom."
+    },
+    {
+      "question_id": "question-0007",
+      "question": "What is included in the estimated monthly home payment?",
+      "answer": "Both buying estimates include the home loan payment, property taxes, and homeowners insurance. The income-qualified home also includes a $100 monthly land lease fee. Neither estimate includes a homeowners association (HOA) fee, which some properties charge.\n\nWant to see the costs for one buying option?",
+      "grade": "correct",
+      "explanation": "Names the applicable loan payment, taxes and insurance. PMI is $0 in this household’s estimates, so omitting the conditional PMI component does not misstate these payments."
+    },
+    {
+      "question_id": "question-0008",
+      "question": "What does total upfront cash cover?",
+      "answer": "For buying, upfront cash covers the down payment, which goes toward the home’s price, and closing costs, the costs of completing the purchase. Your results use 3% of the home price for closing costs.\n\nFor renting, the upfront amount covers one month’s rent. Want to know more about closing costs?",
+      "grade": "correct",
+      "explanation": "Identifies the down payment and closing costs."
+    },
+    {
+      "question_id": "question-0009",
+      "question": "What should I do next if I want to buy?",
+      "answer": "Start by deciding what monthly payment feels comfortable and how much savings you want to keep. Your maximum-price results use all $88,000 of your savings upfront.\n\nThen ask a lender about preapproval—an early review of how much you may be able to borrow. Want to know what a lender checks?",
+      "grade": "partially_correct",
+      "explanation": "Recommends preapproval but omits finding a home and closing, and does not mention the lender confirming assistance."
+    },
+    {
+      "question_id": "question-0010",
+      "question": "How is my upfront buying cost broken down?",
+      "answer": "At your maximum home prices, the $88,000 upfront cost breaks down as follows:\n\n- Open-market home: $77,068 down payment and $10,932 closing costs.\n- Income-qualified home: $80,048 down payment and $7,952 closing costs.\n\nClosing costs are the costs of completing the purchase. Want to know how assistance affects these amounts?",
+      "grade": "partially_correct",
+      "explanation": "The down payment, closing costs and total are correct, but the answer omits the assistance and remaining-savings breakdown."
+    },
+    {
+      "question_id": "question-0011",
+      "question": "What assistance program is used in the cost estimate?",
+      "answer": "Your buying estimates use $0 in down payment assistance for both options. That’s because your saved cash covers the modeled upfront costs; it does not mean no assistance programs are available.\n\nWant to learn about programs that may be worth exploring?",
+      "grade": "incorrect",
+      "explanation": "It gives the $0 assistance amount but does not identify CHFA Preferred Plus, which the question asks for."
+    },
+    {
+      "question_id": "question-0012",
+      "question": "How is my monthly open-market buying payment broken down?",
+      "answer": "At your maximum home price, the $2,350 monthly payment includes:\n\n- Home loan payment: $1,910\n- Property taxes: $167\n- Homeowners insurance: $273\n\nIt does not include a homeowners association fee, which some properties charge. Want to know what the loan payment covers?",
+      "grade": "correct",
+      "explanation": "Provides the total and all nonzero payment components; mortgage insurance is $0."
+    },
+    {
+      "question_id": "question-0013",
+      "question": "Does my buying estimate include PMI?",
+      "answer": "No. Both buying estimates show $0 for private mortgage insurance (PMI). This insurance protects the lender if you stop making loan payments. The estimates use down payments above 20% of the home price.\n\nWant to know when PMI is usually required?",
+      "grade": "correct",
+      "explanation": "Correctly states that both estimates show $0 PMI."
+    },
+    {
+      "question_id": "question-0014",
+      "question": "Are HOA fees included in my buying budget?",
+      "answer": "No. Your monthly buying estimates do not include a homeowners association (HOA) fee. If a home has one, the fee would be an added monthly cost.\n\nWant to know how an HOA fee could affect what you can afford?",
+      "grade": "correct",
+      "explanation": "Correctly says HOA fees are excluded and would add to monthly costs."
+    },
+    {
+      "question_id": "question-0015",
+      "question": "How much equity could I build over time by buying on the open market?",
+      "answer": "For an open-market home at your maximum price, your projected equity is:\n\n1 year: $90,924\n3 years: $120,279\n5 years: $151,998\n10 years: $243,214\n30 years: $884,490\n\nEquity is the home’s value minus what you owe. These amounts include your down payment. Want to know how the projection is calculated?",
+      "grade": "correct",
+      "explanation": "All five projections match and are described as projected equity."
+    },
+    {
+      "question_id": "question-0016",
+      "question": "Do the equity projections account for the debt I would still owe?",
+      "answer": "Yes. Your open-market equity projections subtract the amount you would still owe on your home loan from the projected home value.\n\nWant to see how that works after five years?",
+      "grade": "partially_correct",
+      "explanation": "Correctly identifies the mortgage deduction but omits the stated deduction for assistance debt."
+    },
+    {
+      "question_id": "question-0017",
+      "question": "Is the projected increase in home value guaranteed?",
+      "answer": "No. Home values can rise or fall, so the projected increase is not guaranteed. The projection shows what could happen under the model’s assumptions.\n\nWant to know how a change in home value affects equity?",
+      "grade": "correct",
+      "explanation": "Correctly says growth is not guaranteed and values may fall; the precise appreciation assumption was not necessary to answer the question."
+    },
+    {
+      "question_id": "question-0018",
+      "question": "What loan assumptions were used for my open-market buying estimate?",
+      "answer": "Your open-market estimate uses a 30-year loan at a 6.99% interest rate. At your maximum home price, it assumes a $77,068 down payment and a $287,330 loan, with no private mortgage insurance (PMI).\n\nWant to know how the interest rate affects your payment?",
+      "grade": "partially_correct",
+      "explanation": "Gives the term, rate and down payment but omits that the loan is fixed and the rate depends on the credit band."
+    },
+    {
+      "question_id": "question-0019",
+      "question": "How does the open-market budget calculation account for income and debt?",
+      "answer": "The calculation uses your $60,000 annual income before taxes and your $0 in monthly debt payments to set a housing payment limit of $2,350 a month. It then uses that limit, along with your savings and credit, to calculate your buying budget.\n\nWant to know what the $2,350 payment includes?",
+      "grade": "partially_correct",
+      "explanation": "Gives the correct household income, debt and resulting limit but omits the 47% rule and subtraction method."
+    },
+    {
+      "question_id": "question-0020",
+      "question": "What tax and insurance assumptions are used in the calculations?",
+      "answer": "The calculations use yearly property tax equal to 0.55% of the home price and homeowners insurance equal to 0.9% of the price. Insurance helps cover damage to your home.\n\nAt your open-market maximum price, that’s about $167 a month for tax and $273 for insurance. Want to see the income-qualified amounts?",
+      "grade": "correct",
+      "explanation": "The tax and insurance assumptions match. The appreciation assumption is not a tax or insurance assumption."
+    },
+    {
+      "question_id": "question-0021",
+      "question": "How much open-market housing is shown within my budget?",
+      "answer": "I can’t see a count of open-market homes within your budget right now. Your buying estimate shows a maximum home price of about $364,398.\n\nWant to know how that price was calculated?",
+      "grade": "incorrect",
+      "explanation": "Does not provide the requested housing availability count; the current buying page shows 676 homes in range."
+    },
+    {
+      "question_id": "question-0022",
+      "question": "What are the open-market homes in Windsor like within my budget?",
+      "answer": "I can’t see what open-market homes in Windsor are within your budget. Your saved area is Denver, and your results don’t currently include a home listing summary.\n\nWant to know what your open-market buying budget covers?",
+      "grade": "incorrect",
+      "explanation": "Says the Windsor details are unavailable and provides none of the requested neighborhood information."
+    },
+    {
+      "question_id": "question-0023",
+      "question": "What are the open-market options in Capitol Hill within my budget?",
+      "answer": "Your results don’t include a listing summary for Capitol Hill, so I can’t tell which open-market homes are within your budget. Your maximum open-market home price is about $364,398, before any homeowners association fee.\n\nWant to know how that fee could affect your budget?",
+      "grade": "incorrect",
+      "explanation": "Does not provide the Capitol Hill home count or characteristics."
+    },
+    {
+      "question_id": "question-0024",
+      "question": "What are the open-market options in Hampden within my budget?",
+      "answer": "Your results don’t include an open-market listing summary for Hampden, so I can’t tell which homes are within your budget there. Your open-market buying estimate has a maximum price of about $364,398.\n\nWant to know what costs are included in that estimate?",
+      "grade": "incorrect",
+      "explanation": "Does not provide the Hampden home count or characteristics."
+    },
+    {
+      "question_id": "question-0025",
+      "question": "What are the open-market options in Hampden South within my budget?",
+      "answer": "Your results don’t include a listing summary for Hampden South, so I can’t tell which homes are within your budget there. Your open-market estimate has a maximum home price of about $364,398.\n\nWant to know what costs that estimate includes?",
+      "grade": "incorrect",
+      "explanation": "Does not provide the Hampden South home count or characteristics."
+    },
+    {
+      "question_id": "question-0026",
+      "question": "What are the open-market options in Five Points within my budget?",
+      "answer": "Your results don’t include a listing summary for Five Points, so I can’t tell which homes are within your budget there. Your open-market estimate has a maximum home price of about $364,398.\n\nWant to know what costs that estimate includes?",
+      "grade": "incorrect",
+      "explanation": "Does not provide the Five Points home count or characteristics."
+    },
+    {
+      "question_id": "question-0027",
+      "question": "What are the open-market options in Cheesman Park within my budget?",
+      "answer": "Your results don’t include a listing summary for Cheesman Park, so I can’t tell which open-market homes are within your budget there. Your open-market estimate has a maximum home price of about $364,398.\n\nWant to know what costs that estimate includes?",
+      "grade": "incorrect",
+      "explanation": "Does not provide the Cheesman Park home count or characteristics."
+    },
+    {
+      "question_id": "question-0028",
+      "question": "What are the open-market options in Marston within my budget?",
+      "answer": "Your results don’t include a listing summary for Marston, so I can’t tell which homes are within your budget there. Your open-market estimate has a maximum home price of about $364,398.\n\nWant to know what costs that estimate includes?",
+      "grade": "incorrect",
+      "explanation": "Does not provide the Marston home count or characteristics."
+    },
+    {
+      "question_id": "question-0029",
+      "question": "What are the open-market options in Washington Virginia Vale within my budget?",
+      "answer": "Your results don’t include a listing summary for Washington Virginia Vale, so I can’t tell what homes are within your budget there.\n\nWant to know what costs your open-market budget includes?",
+      "grade": "incorrect",
+      "explanation": "Does not provide the Washington Virginia Vale home count or characteristics."
+    },
+    {
+      "question_id": "question-0030",
+      "question": "What are the open-market options in Speer within my budget?",
+      "answer": "Your results don’t include an open-market listing summary for Speer, so I can’t tell what homes there are within your budget.\n\nWant to know what costs your open-market budget includes?",
+      "grade": "incorrect",
+      "explanation": "Does not provide the Speer home count or characteristics."
+    },
+    {
+      "question_id": "question-0031",
+      "question": "What are the open-market options in Cbd within my budget?",
+      "answer": "Your results don’t include an open-market listing summary for CBD, so I can’t tell what homes are within your budget there. Your estimated maximum home price is about $364,398.\n\nWant to know what costs that estimate includes?",
+      "grade": "incorrect",
+      "explanation": "Does not provide the CBD home count or characteristics."
+    },
+    {
+      "question_id": "question-0032",
+      "question": "Is the open-market neighborhood table showing every area with homes in my range?",
+      "answer": "Not necessarily. The table is based on available listing data for your selected area and nearby areas, not every area with homes in your range. Your current results don’t include a listing summary, so I can’t check which areas it would show.\n\nWant to know how the app decides if a home is in your range?",
+      "grade": "partially_correct",
+      "explanation": "Correctly says the table is not necessarily exhaustive, but omits the displayed 10 of 60 areas and the ranking and sorting details."
+    },
+    {
+      "question_id": "question-0033",
+      "question": "Where can I look at actual open-market homes for sale?",
+      "answer": "From your results page, open Market homebuying. That page has a Zillow search where you can look at homes for sale.\n\nWant help understanding which costs to check when looking at a home?",
+      "grade": "correct",
+      "explanation": "Directs the user to the Zillow search on the buying page."
+    },
+    {
+      "question_id": "question-0034",
+      "question": "Does being shown an assistance program mean I qualify for it?",
+      "answer": "No. A program shown in your results has passed an early check, but other rules may still apply.\n\nWant to know what kinds of rules a program may check?",
+      "grade": "correct",
+      "explanation": "Correctly explains that being shown a program does not establish eligibility and further rules apply."
+    },
+    {
+      "question_id": "question-0035",
+      "question": "How does CHFA SmartStep Plus work?",
+      "answer": "CHFA SmartStep Plus combines a home loan with help for your down payment and closing costs. The help is a second loan with payments delayed until a later event, such as selling or refinancing the home.\n\nWant to know what closing costs are?",
+      "grade": "partially_correct",
+      "explanation": "Describes deferred loan assistance but omits the grant alternative, government-backed mortgage and repeat-buyer eligibility."
+    },
+    {
+      "question_id": "question-0036",
+      "question": "How does CHFA Preferred Plus work?",
+      "answer": "CHFA Preferred Plus pairs a home loan with help for your down payment and closing costs, the fees paid when you buy. The help is a second loan that generally does not require monthly payments; it comes due when you sell, refinance, or pay off the first loan.\n\nWant to know what closing costs include?",
+      "grade": "partially_correct",
+      "explanation": "Describes deferred repayment and no monthly payments but omits the conventional mortgage and no-interest terms."
+    },
+    {
+      "question_id": "question-0037",
+      "question": "Can repeat buyers use CHFA Colorado HFA1 Plus?",
+      "answer": "Yes. Repeat buyers can use CHFA Colorado HFA1 Plus. You do not have to be a first-time buyer, but you must meet the program’s other rules.\n\nWant to know what those rules include?",
+      "grade": "correct",
+      "explanation": "Correctly answers that repeat buyers may use the program subject to other rules; repayment details were not asked."
+    },
+    {
+      "question_id": "question-0038",
+      "question": "Who is metroDPA for, and how is it repaid?",
+      "answer": "metroDPA helps eligible homebuyers in participating Colorado communities pay the down payment and closing costs. Repeat buyers may qualify, too.\n\nThe assistance is generally a loan forgiven over three years if you stay in the home. You may have to repay some if you sell or refinance sooner.\n\nWant to know what closing costs are?",
+      "grade": "partially_correct",
+      "explanation": "Correctly identifies participating communities and repeat buyers, but says the loan is generally forgiven after three years, contrary to the site’s statement that it must be repaid later."
+    },
+    {
+      "question_id": "question-0039",
+      "question": "What does the Chenoa Fund offer FHA buyers?",
+      "answer": "The Chenoa Fund offers down payment help to eligible buyers using an FHA loan, a home loan backed by the federal government. The help comes as a second loan. Some options may be forgiven; others must be repaid.\n\nWant to know what loan forgiveness means?",
+      "grade": "partially_correct",
+      "explanation": "Identifies FHA down payment help and repayable or potentially forgivable loans, but omits the no-income-limit and qualifying-payment details."
+    },
+    {
+      "question_id": "question-0040",
+      "question": "Who can use CHFA FirstStep Plus?",
+      "answer": "CHFA FirstStep Plus is generally for first-time homebuyers and eligible veterans. Some buyers in designated areas may also qualify without being first-time buyers. Income and home-price limits apply.\n\nWant to know what counts as a first-time buyer?",
+      "grade": "correct",
+      "explanation": "Identifies first-time buyers and the veteran and targeted-area exceptions."
+    },
+    {
+      "question_id": "question-0041",
+      "question": "Who is CHFA FirstGeneration Plus meant for?",
+      "answer": "CHFA FirstGeneration Plus is meant for eligible first-time buyers whose parents or guardians have never owned a home. It also serves eligible buyers who have been in foster care.\n\nWant to know what counts as a first-time buyer?",
+      "grade": "correct",
+      "explanation": "Identifies first-time, first-generation and foster-care populations."
+    },
+    {
+      "question_id": "question-0042",
+      "question": "How do the CHAC Statewide DPA repayment options differ?",
+      "answer": "I can’t confirm the current CHAC Statewide DPA repayment options or how they differ. The loan terms matter because some options may require monthly payments while others delay repayment.",
+      "grade": "incorrect",
+      "explanation": "Does not identify or explain either repayment option."
+    },
+    {
+      "question_id": "question-0043",
+      "question": "What are the main restrictions on Colorado Roots down payment assistance?",
+      "answer": "I can’t confirm the current restrictions for Colorado Roots down payment assistance. The rules may cover income, home location, and repayment, so check the current program terms before relying on the assistance.",
+      "grade": "incorrect",
+      "explanation": "Does not provide the stated buyer, area, repayment or FHA restrictions."
+    },
+    {
+      "question_id": "question-0044",
+      "question": "How does the Dearfield Homeownership Fund work?",
+      "answer": "I can’t confirm the Dearfield Homeownership Fund’s current terms, including who qualifies or whether its assistance must be repaid. Check the fund’s current program details before relying on the money.",
+      "grade": "incorrect",
+      "explanation": "Does not provide the program’s eligibility or repayment terms."
+    },
+    {
+      "question_id": "question-0045",
+      "question": "What homebuying assistance is listed for people with disabilities?",
+      "answer": "The app lists two programs for buyers with disabilities: CHFA HomeAccess Plus and CHAC’s disability assistance. Your income is within the listed limits for both, but other rules still apply.\n\nWant to know more about CHFA HomeAccess Plus?",
+      "grade": "partially_correct",
+      "explanation": "Names both programs but omits their specific disability eligibility and CHAC’s deferred-payment and contribution terms."
+    },
+    {
+      "question_id": "question-0046",
+      "question": "Is there a homeownership program for Section 8 participants?",
+      "answer": "Yes. The Housing Choice Voucher Homeownership Program lets some Section 8 participants use their voucher to help with homeownership costs. Your local housing agency must offer the program, and you must meet its rules.\n\nWant to know what costs the voucher may help pay?",
+      "grade": "partially_correct",
+      "explanation": "Gives a useful general Section 8 homeownership answer but does not identify the listed CHFA SectionEight Homeownership Plus program."
+    },
+    {
+      "question_id": "question-0047",
+      "question": "What does CHFA Preferred Very Low Income offer?",
+      "answer": "CHFA Preferred Very Low Income offers a home loan for eligible buyers with lower incomes. It may also provide down payment and closing cost help. I can’t confirm its current loan terms or income limits.\n\nWant to know what closing costs are?",
+      "grade": "partially_correct",
+      "explanation": "Identifies lower-income buyers and possible assistance but omits deferred assistance and reduced mortgage-insurance requirements."
+    },
+    {
+      "question_id": "question-0048",
+      "question": "What assistance is listed for public-school employees?",
+      "answer": "The app lists CHFA Schools to Home for eligible public-school employees. It offers homebuying assistance; your income is within the listed limit, but other rules also apply.\n\nWant to know more about income limits?",
+      "grade": "partially_correct",
+      "explanation": "Names the program and public-school employees but omits the full-time Colorado qualification and appreciation-sharing repayment."
+    },
+    {
+      "question_id": "question-0049",
+      "question": "How can I request contact from a lender through the site?",
+      "answer": "From the results page, open the market homebuying path. If that path is available, its details page includes a lender connection option.",
+      "grade": "partially_correct",
+      "explanation": "Identifies the lender connection option but omits the form, consent and submission steps."
+    },
+    {
+      "question_id": "question-0050",
+      "question": "What's the tradeoff with a home that has resale conditions?",
+      "answer": "A home with resale conditions may cost less to buy. In return, rules may limit the price you can sell it for or who can buy it, so you may gain less money when you sell.\n\nWant to know how a resale price limit works?",
+      "grade": "correct",
+      "explanation": "Explains the lower purchase price and resale restrictions, including their effect on sale proceeds."
+    },
+    {
+      "question_id": "question-0051",
+      "question": "What is my estimated budget for a home with resale conditions?",
+      "answer": "Your estimated home price budget for a home with resale conditions is about $265,069. At that price, the modeled monthly ownership cost is $1,650.\n\nWant to know what the monthly cost includes?",
+      "grade": "correct",
+      "explanation": "Gives the $265,069 maximum budget."
+    },
+    {
+      "question_id": "question-0052",
+      "question": "Who can help me get started with a below-market home?",
+      "answer": "Elevation Community Land Trust can help you get started with a below-market home. From your results, open the affordable homeownership path to find a form to connect with Elevation.\n\nWant to know how a community land trust works?",
+      "grade": "correct",
+      "explanation": "Identifies Elevation and directs the user to the connection form; this answers who can help and how to start."
+    },
+    {
+      "question_id": "question-0053",
+      "question": "How is the upfront cost for a resale-conditioned home broken down?",
+      "answer": "For the $265,069 home price, the upfront cost is $88,000: $80,048 for the down payment and $7,952 for closing costs, the costs of completing the purchase. The model uses no assistance for this amount.\n\nWant to know how assistance is figured?",
+      "grade": "correct",
+      "explanation": "Gives the correct down payment, closing costs, total and $0 assistance."
+    },
+    {
+      "question_id": "question-0054",
+      "question": "What makes up the monthly payment for a resale-conditioned home?",
+      "answer": "At your $265,069 home price budget, the $1,650 monthly cost includes:\n\n• $1,230 for the home loan and interest\n• $121 for property tax\n• $199 for homeowners insurance\n• $100 for the land trust fee\n\nIt does not include a specific home’s HOA fee, if any.\n\nWant to know what the land trust fee covers?",
+      "grade": "correct",
+      "explanation": "Gives the total and all nonzero monthly payment components."
+    },
+    {
+      "question_id": "question-0055",
+      "question": "How much equity could I build over time in a resale-conditioned home?",
+      "answer": "Equity is the value you own in a home after subtracting what you owe. For your $265,069 home budget, the model shows about $101,479 in equity after 5 years and $129,126 after 10 years. That includes your down payment and accounts for resale conditions.\n\nWant to know how the resale conditions affect equity?",
+      "grade": "partially_correct",
+      "explanation": "Gives correct five- and ten-year projections but omits the other displayed time horizons and the uncertainty caveat."
+    },
+    {
+      "question_id": "question-0056",
+      "question": "What loan assumptions are used for the resale-conditioned home estimate?",
+      "answer": "The estimate uses a 30-year home loan at 6.99% interest. It assumes a $265,069 home price, an $80,048 down payment, and a $185,021 loan. It does not include monthly mortgage insurance.\n\nWant to know why this estimate has no mortgage insurance?",
+      "grade": "partially_correct",
+      "explanation": "Gives the correct home price, down payment, term and rate but omits that the loan is fixed and the rate depends on credit band."
+    },
+    {
+      "question_id": "question-0057",
+      "question": "How are the income limits in the affordable-home budget calculation different?",
+      "answer": "The affordable-home calculation uses a lower share of your income for housing: 33%, or $1,650 a month. The market-home calculation uses 47%, or $2,350 a month. These are monthly payment limits, not income limits for eligibility.\n\nWant to know what the $1,650 includes?",
+      "grade": "partially_correct",
+      "explanation": "Correctly contrasts the 33% housing and 47% market allowances for this debt-free household but omits the affordable 43% total-debt limit and debt treatment."
+    },
+    {
+      "question_id": "question-0058",
+      "question": "How many affordable homes are shown within my budget?",
+      "answer": "The number of affordable homes within your budget is not available right now. That does not mean there are no homes available.\n\nWant to know what the affordable-home budget covers?",
+      "grade": "incorrect",
+      "explanation": "Does not provide the requested count of 12 affordable homes."
+    },
+    {
+      "question_id": "question-0059",
+      "question": "What affordable homes are shown in Lincoln Park?",
+      "answer": "The affordable-home listing details for Lincoln Park are not available right now. That does not mean there are no affordable homes there.\n\nWant to know how to get started with Elevation Community Land Trust?",
+      "grade": "incorrect",
+      "explanation": "Does not provide the Lincoln Park listing details."
+    },
+    {
+      "question_id": "question-0060",
+      "question": "What affordable homes are shown in Five Points?",
+      "answer": "The affordable-home listing details for Five Points are not available right now. That does not mean there are no affordable homes there.\n\nWant to know how to get started with Elevation Community Land Trust?",
+      "grade": "incorrect",
+      "explanation": "Does not provide the Five Points affordable-home details."
+    },
+    {
+      "question_id": "question-0061",
+      "question": "What affordable homes are shown in East Colfax?",
+      "answer": "Affordable-home listing details for East Colfax are not available right now. That does not mean there are no affordable homes there.\n\nWant to know how to get started with Elevation Community Land Trust?",
+      "grade": "incorrect",
+      "explanation": "Does not provide the East Colfax affordable-home details."
+    },
+    {
+      "question_id": "question-0062",
+      "question": "How are the affordable-home neighborhoods ordered?",
+      "answer": "I can’t confirm how the affordable-home neighborhoods are ordered. The listing details aren’t available in your current results, and the page description doesn’t explain the order.",
+      "grade": "incorrect",
+      "explanation": "Does not explain the ordering, which the saved page describes."
+    },
+    {
+      "question_id": "question-0063",
+      "question": "What lower-cost rent does the site estimate for me?",
+      "answer": "The site estimates a lower-cost rent of about $1,752 per month in Denver.\n\nWant to know how much that could save you compared with your current rent?",
+      "grade": "correct",
+      "explanation": "Gives the requested estimated rent of $1,752 per month."
+    },
+    {
+      "question_id": "question-0064",
+      "question": "What are the lower-cost rental estimates in the neighborhoods shown?",
+      "answer": "The site estimates lower-cost rent of $1,752 a month for Denver. Neighborhood-by-neighborhood rental estimates are not available in your current results.\n\nWant to know how the Denver estimate compares with your current rent?",
+      "grade": "incorrect",
+      "explanation": "Does not provide any of the requested neighborhood rental estimates."
+    },
+    {
+      "question_id": "question-0065",
+      "question": "Are there rental estimates for more areas than the ones displayed?",
+      "answer": "I can’t tell whether the site has estimates for more areas. Your current results don’t include an area-by-area rental list.\n\nWant to know how the Denver rent estimate is chosen?",
+      "grade": "incorrect",
+      "explanation": "Does not answer whether additional areas have estimates; the saved page reports 25 more."
+    },
+    {
+      "question_id": "question-0066",
+      "question": "Where can I look for actual rental units?",
+      "answer": "You can look for rental listings on sites such as ColoradoHousingSearch.com, Zillow, or Apartments.com. You can also contact property managers directly.\n\nWant tips for spotting rental scams?",
+      "grade": "correct",
+      "explanation": "Names Zillow as a place to look for rental listings, matching the site’s rental link."
+    }
+  ],
+  "metrics": {
+    "attempted": 66,
+    "answered": 66,
+    "graded": 66,
+    "counts": {
+      "correct": 24,
+      "partially_correct": 20,
+      "incorrect": 22,
+      "outdated": 0,
+      "unresolved": 0,
+      "browser_failure": 0,
+      "agent_failure": 0,
+      "judge_failure": 0
+    },
+    "accuracy": 0.36363636363636365,
+    "weighted_score": 0.5151515151515151,
+    "browser_failure_rate": 0.0,
+    "grading_coverage": 1.0
+  },
+  "clarifications": [],
+  "fresh_chat_at_start_verified": true,
+  "reference_updates": [],
+  "investigations": [
+    {
+      "question_id": "question-0021",
+      "checked_at": "2026-10-27T20:15:25.078121+00:00",
+      "context_comparison": "The same run’s unchanged household shows $60,000 annual income, $88,000 saved and $364,398 buying power, matching the reference context.",
+      "current_sources": [
+        {
+          "url": "http://localhost:5173/c4351436-584c-4c9a-bf3d-418d6a150903/results/buying",
+          "text": "BASED ON YOUR MAXIMUM BUYING POWER OF $364,398\n\nHere’s what you can get in neighborhoods close to your location preference\nHOMES IN RANGE\n\n676\n\nNEIGHBORHOODS\n\n60\n\nTYPICAL HOME\n\n$229,000\n\nAVERAGE SIZE\n\n862 sq ft",
+          "quote": "HOMES IN RANGE\n\n676"
+        }
+      ]
+    },
+    {
+      "question_id": "question-0038",
+      "checked_at": "2026-10-27T20:15:25.094241+00:00",
+      "context_comparison": "The unchanged run household is on its open-market buying page, with the same $60,000 income and $88,000 saved used in the benchmark.",
+      "current_sources": [
+        {
+          "url": "http://localhost:5173/c4351436-584c-4c9a-bf3d-418d6a150903/results/buying",
+          "text": "metroDPA — For buyers in participating communities, including repeat buyers. Assistance has no interest or monthly payments but must be repaid later.",
+          "quote": "Assistance has no interest or monthly payments but must be repaid later."
+        }
+      ]
+    }
+  ],
+  "opencode_session_id": "ses_e810daccaffeW8hQP1oYMzUzJj",
+  "completed_at": "2026-10-27T20:15:25.120112+00:00"
+}

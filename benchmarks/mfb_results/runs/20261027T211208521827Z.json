@@ -1,0 +1,286 @@
+{
+  "schema_version": 1,
+  "id": "6a1baa7f961547af9103109db994ff6b",
+  "started_at": "2026-10-27T21:12:08.524071+00:00",
+  "updated_at": "2026-10-27T21:26:30.036674+00:00",
+  "status": "completed",
+  "target_url": "https://screener.myfriendben.org/co/step-1",
+  "benchmark_id": "da7ddca5086c4288ba87608578bc1bc0",
+  "benchmark_sha256": "ca3830798211e8db5d787a6cd19335c6491aa80af7ca267cc4ebea2b175c4520",
+  "config": {
+    "url": "https://screener.myfriendben.org/co/step-1",
+    "models": {
+      "generation": "openai/gpt-6.1-sol",
+      "runner": "openai/gpt-6.1-terra"
+    },
+    "question_limit": null,
+    "page_limit": null,
+    "instructions": [
+      "Create a test profile, selecting test in the referrer menu when you get there. Gather information from the main results page, 1 of the programs available to the user, and one of the urgent/immediate needs available to the user.",
+      "Launch agent-browser with --args '--disable-http2,--disable-quic' to avoid certain network issues."
+    ],
+    "clarifications": [
+      {
+        "question": "Onboarding is blocked at Step 2 by a required checkbox agreeing to the Privacy Policy and Terms and Conditions. Your instructions authorize a fictional test profile but prohibit accepting agreements without specific authorization. May I accept this agreement to proceed with the test profile?",
+        "answer": "yes",
+        "target_url": "https://screener.myfriendben.org/co/step-1"
+      }
+    ],
+    "agent_timeout_seconds": 600,
+    "browser_timeout_seconds": 60,
+    "response_timeout_seconds": 120,
+    "headed": false,
+    "interactive": true
+  },
+  "planned_questions": 30,
+  "results": [
+    {
+      "question_id": "question-0001",
+      "question": "What benefits did you find for me overall?",
+      "answer": "Your screening turned up seven programs: Medicaid for health coverage, SNAP for food, LEAP and the Weatherization Assistance Program for energy costs, RTD Live for transit, Lifeline for phone or internet, and a Denver trash and recycling rebate.\n\nThe two biggest are Medicaid (about $3,720 a year) and SNAP (about $3,672 a year) — note the page shows most of these as monthly figures, so those will look smaller there.\n\nWant me to walk through them one at a time, or is there something specific going on right now that you'd like to start with? I'm happy to answer questions as we go.",
+      "grade": "partially_correct",
+      "explanation": "It names all seven programs but omits the overall $781 monthly savings and $0 annual tax credit."
+    },
+    {
+      "question_id": "question-0002",
+      "question": "How are my estimated savings split across different needs?",
+      "answer": "Here's the yearly split by need:\n\nHealth: Medicaid, about $3,720\nFood: SNAP, about $3,672\nEnergy: LEAP about $530, plus Weatherization about $350\nTransit: RTD Live, about $732\nPhone/internet: Lifeline, about $111\nTrash and recycling: Denver rebate, about $252\n\nRemember these are annual totals — the page shows most of them divided into monthly amounts, so the numbers there will look smaller. Want to dig into any one of these?",
+      "grade": "correct",
+      "explanation": "The annual figures correspond, allowing for rounding, to the displayed monthly category totals; housing and utilities are itemized rather than combined."
+    },
+    {
+      "question_id": "question-0003",
+      "question": "How can I check benefits for household members with different immigration statuses?",
+      "answer": "There's a citizenship filter above your program list on the results page — it shows one choice at a time, with six options: U.S. citizen, green card 5+ years, green card under 5 years, refugee or asylee, other lawfully present, and undocumented. It opens set to U.S. citizen, so it's always filtering something.\n\nChanging it updates which programs show up, so you can switch it to match a household member's status and see what comes back. I can't tell you which setting to choose — that depends on each person's situation — but you can flip through them and see the results change.\n\nOne thing to know: that filter only affects the programs list, not the resources tab. Want me to explain anything about a specific program that shows up?",
+      "grade": "partially_correct",
+      "explanation": "It explains how to check different household members and names all six choices, but omits that filter selections are not saved or shared."
+    },
+    {
+      "question_id": "question-0004",
+      "question": "How much could Medicaid save me, and how long does applying take?",
+      "answer": "Medicaid is estimated at about $3,720 a year — that's the yearly total, so the page will show it as a monthly figure instead.\n\nApplying takes about 45 minutes, and benefits can take up to 45 days to start. If you'd like to apply, the link is here: https://peak.my.site.com/peak/s/benefit-information/benefit-detail?language=en_US&category=health-care-assistance-programs&utm_source=myfriendben&utm_medium=referral_link&utm_campaign=peak_utm&utm_id=mfbpeak&utm_content=apply_en\n\nWant me to go over what documents you'd need to gather for it?",
+      "grade": "correct",
+      "explanation": "$3,720 annually equals $310 monthly, and the application estimate is 45 minutes."
+    },
+    {
+      "question_id": "question-0005",
+      "question": "What does my SNAP estimate look like?",
+      "answer": "SNAP is estimated at about $3,672 a year — again, that's the annual total, so your page shows it as a monthly amount (roughly $306 a month).\n\nApplying takes about 2 hours, and benefits can take up to 30 days to start. One heads-up from your screening: SNAP rules have changed for some non-citizens, but your household may still qualify — it's worth applying to find out.\n\nWant the application link, or the documents you'd need?",
+      "grade": "correct",
+      "explanation": "It gives $306 monthly, $3,672 annually, and the two-hour application estimate."
+    },
+    {
+      "question_id": "question-0006",
+      "question": "What are the estimated savings and application time for LEAP?",
+      "answer": "LEAP is estimated at about $530 a year — the yearly total, so your page will show it as a monthly figure.\n\nApplying takes about 60 minutes, and benefits can take up to 60 days to start, so it's worth starting sooner rather than later if you want it for this heating season.\n\nWant the application link or the documents you'd need?",
+      "grade": "correct",
+      "explanation": "Approximately $530 annually corresponds to the rounded $44 monthly estimate, and the application time is 60 minutes."
+    },
+    {
+      "question_id": "question-0007",
+      "question": "What are the estimated savings and application time for weatherization assistance?",
+      "answer": "Weatherization is estimated at about $350 a year — the yearly total, so your page will show it as a monthly figure.\n\nApplying takes about 30–60 minutes, and benefits can take up to 30 days to start. The link to apply is here: https://socgov02.my.site.com/ceoweatherization/s/\n\nWant me to go over the documents you'd need for it?",
+      "grade": "correct",
+      "explanation": "Approximately $350 annually corresponds to the rounded $29 monthly estimate, and the application time is 30–60 minutes."
+    },
+    {
+      "question_id": "question-0008",
+      "question": "How much is the Denver trash rebate worth, and how long does applying take?",
+      "answer": "The Denver trash and recycling rebate is estimated at about $252 a year — the yearly total, so your page will show it as a monthly figure.\n\nApplying takes about 10 minutes, and the rebate shows up in your next billing cycle. The link is here: https://denvergov.org/Government/Agencies-Departments-Offices/Agencies-Departments-Offices-Directory/Recycle-Compost-Trash/Resources/Expanded-Service/Trash-Rebate\n\nWant the documents you'd need for it?",
+      "grade": "partially_correct",
+      "explanation": "The $252 annual estimate and 10-minute application time are correct, but it incorrectly says the page displays the rebate as a monthly figure."
+    },
+    {
+      "question_id": "question-0009",
+      "question": "What savings and application time are listed for Lifeline?",
+      "answer": "Lifeline is estimated at about $111 a year — the yearly total, so your page will show it as a monthly figure.\n\nApplying takes about 15 minutes, and benefits can start in as little as up to 2 days. The link is here: https://nv.fcc.gov/lifeline\n\nWant the documents you'd need for it?",
+      "grade": "correct",
+      "explanation": "About $111 annually corresponds to the rounded $9 monthly estimate, and the application time is 15 minutes."
+    },
+    {
+      "question_id": "question-0010",
+      "question": "What could RTD Live save me, and how long does applying take?",
+      "answer": "RTD Live is estimated at about $732 a year — the yearly total, so your page will show it as a monthly figure.\n\nApplying takes about 45 minutes, and benefits can take up to 60 days to start. The link is here: https://peak.my.site.com/peak/s/benefit-information/benefit-detail?language=en_US&category=public-transit-assistance-programs&utm_source=myfriendben&utm_medium=referral_link&utm_campaign=peak_utm&utm_id=mfbpeak&utm_content=apply_en\n\nWant the documents you'd need for it?",
+      "grade": "correct",
+      "explanation": "$732 annually equals $61 monthly, and the application time is 45 minutes."
+    },
+    {
+      "question_id": "question-0011",
+      "question": "How does SNAP help me buy groceries?",
+      "answer": "SNAP puts money on an EBT card each month, which works like a debit card at grocery stores, supermarkets, and many farmers markets that accept it. You can use it for groceries — fruits, vegetables, meat, dairy, bread, and similar food — but not for alcohol, tobacco, hot prepared foods, or non-food items.\n\nIf you'd like to apply, the link is here: https://peak.my.site.com/peak/s/benefit-information/benefit-detail?language=en_US&category=food-assistance-programs&utm_source=myfriendben&utm_medium=referral_link&utm_campaign=peak_utm&utm_id=mfbpeak&utm_content=apply_en\n\nWant me to go over the documents you'd need?",
+      "grade": "partially_correct",
+      "explanation": "It correctly explains monthly EBT funds for food at participating stores, but omits that some stores double the card's value."
+    },
+    {
+      "question_id": "question-0012",
+      "question": "What determines how much SNAP I get?",
+      "answer": "SNAP amounts are based mainly on your household size and your net income — that's your income after certain deductions, like rent or mortgage, utilities, and child care costs. Households with a member who is 60+ or has a disability can also deduct medical expenses.\n\nYour estimate of about $3,672 a year is based on what you reported in the screening; the agency makes the final determination when you apply. Want the application link or the documents you'd need?",
+      "grade": "correct",
+      "explanation": "It identifies household size, income, and relevant expense deductions as factors, while making clear that the agency determines the final amount."
+    },
+    {
+      "question_id": "question-0013",
+      "question": "Will I need an interview for SNAP?",
+      "answer": "I don't have the interview details in your screening results, so I can't say for certain — that's set by the agency that runs SNAP, and it can depend on your situation. The safest move is to confirm when you apply or ask someone who helps with SNAP applications.\n\nHunger Free Colorado runs a statewide SNAP hotline at (855) 855-4626 and can answer that and help you through the application. Want the application link too?",
+      "grade": "incorrect",
+      "explanation": "It does not answer whether an interview is needed; the SNAP page says a local agency will interview the applicant."
+    },
+    {
+      "question_id": "question-0014",
+      "question": "Who might have special SNAP eligibility rules?",
+      "answer": "From your screening, two groups are flagged: some non-citizens — SNAP rules have changed for them, though your household may still qualify — and people who may have work rules tied to getting SNAP.\n\nBeyond that, I don't have the full eligibility rulebook in your results, so I can't list every special category. Hunger Free Colorado's hotline at (855) 855-4626 can answer questions about your specific situation, and the application itself is how you find out for sure: https://peak.my.site.com/peak/s/benefit-information/benefit-detail?language=en_US&category=food-assistance-programs&utm_source=myfriendben&utm_medium=referral_link&utm_campaign=peak_utm&utm_id=mfbpeak&utm_content=apply_en\n\nWant me to go over the documents you'd need?",
+      "grade": "partially_correct",
+      "explanation": "It identifies non-citizens and people subject to work rules as groups with relevant special rules, but omits all three groups specifically identified in the reference: college students, people with disabilities, and adults 60 or older."
+    },
+    {
+      "question_id": "question-0015",
+      "question": "Can my household still get SNAP if someone isn't a citizen?",
+      "answer": "Your screening flags exactly this: SNAP rules have changed for some non-citizens, but your household may still qualify — the only way to know for sure is to apply and let the agency determine it. I can't predict the outcome or tell you which statuses qualify.\n\nHunger Free Colorado's hotline at (855) 855-4626 can talk through your specific situation, and the application is here: https://peak.my.site.com/peak/s/benefit-information/benefit-detail?language=en_US&category=food-assistance-programs&utm_source=myfriendben&utm_medium=referral_link&utm_campaign=peak_utm&utm_id=mfbpeak&utm_content=apply_en\n\nWant the documents you'd need to gather?",
+      "grade": "correct",
+      "explanation": "It says rules changed for some non-citizens, the household may still qualify, and applying determines eligibility."
+    },
+    {
+      "question_id": "question-0016",
+      "question": "What are the SNAP work rules?",
+      "answer": "I don't have the specifics of the work rules in your screening results — it only flags that you may have work rules if you get SNAP. I can't spell out the requirements or exemptions without guessing, and that's not something to guess at.\n\nHunger Free Colorado's hotline at (855) 855-4626 can explain the current work rules and whether they apply to you. Want the application link as well?",
+      "grade": "incorrect",
+      "explanation": "It declines to explain the work rules and supplies none of the applicable age, activity, or time-limit details."
+    },
+    {
+      "question_id": "question-0017",
+      "question": "How can I apply for SNAP online?",
+      "answer": "You can apply online through the link below — it opens the state's application site:\n\nhttps://peak.my.site.com/peak/s/benefit-information/benefit-detail?language=en_US&category=food-assistance-programs&utm_source=myfriendben&utm_medium=referral_link&utm_campaign=peak_utm&utm_id=mfbpeak&utm_content=apply_en\n\nApplying takes about 2 hours, and benefits can take up to 30 days to start. Want me to go over the documents you'd need to have ready?",
+      "grade": "partially_correct",
+      "explanation": "It provides the state's online application link, but does not explain the option to combine several benefits in one Colorado PEAK application."
+    },
+    {
+      "question_id": "question-0018",
+      "question": "How long does it take to receive SNAP?",
+      "answer": "SNAP benefits can take up to 30 days to start after you apply — that's the timeframe from your screening. The application itself takes about 2 hours to complete.\n\nIf you'd like to get started, the link is here: https://peak.my.site.com/peak/s/benefit-information/benefit-detail?language=en_US&category=food-assistance-programs&utm_source=myfriendben&utm_medium=referral_link&utm_campaign=peak_utm&utm_id=mfbpeak&utm_content=apply_en\n\nWant the documents you'd need to have ready?",
+      "grade": "partially_correct",
+      "explanation": "It distinguishes application time from benefit receipt, but describes 30 days as an upper limit rather than the page's average and omits possible county processing delays."
+    },
+    {
+      "question_id": "question-0019",
+      "question": "What information should I gather for my SNAP application?",
+      "answer": "Here's what your screening lists for SNAP:\n\nSocial security number\nProof of identity (driver's license, state ID)\nProof of marital status (marriage license, divorce decree, death certificate)\nProof of U.S. status (birth certificate, green card)\nProof of resources, if a household member is 60+ or has a disability\nProof of disability determination, if applicable\nProof of home address (lease, mortgage statement, utility bill)\nEvidence of participation in a qualifying benefits program, if applicable\nProof of earned income (pay stubs, tax returns, W-2, 1099) and employer info\nProof of unearned income (child support, social security, unemployment)\nProof of expenses (rent or mortgage, child care, utilities, medical)\n\nYou don't need everything on this list — only what applies to you. Want the application link, or help finding someone to assist you with it?",
+      "grade": "correct",
+      "explanation": "It covers the listed information and documents, including the applicable conditional requirements."
+    },
+    {
+      "question_id": "question-0020",
+      "question": "What can I use to show my income and expenses for SNAP?",
+      "answer": "For income, your screening lists earned income (pay stubs, tax returns, W-2, 1099) plus employer information, and unearned income (child support, social security, unemployment). For expenses, it lists rent or mortgage, child care, utilities, and medical costs.\n\nThose are the categories from your results — the agency will tell you exactly which documents it wants for your situation. Want the application link or someone who can help you apply?",
+      "grade": "correct",
+      "explanation": "It lists the saved examples of earned and unearned income, employer information, and expense categories."
+    },
+    {
+      "question_id": "question-0021",
+      "question": "What documents can show my identity, address, and status for SNAP?",
+      "answer": "From your SNAP checklist:\n\nIdentity: driver's license or official state ID card\nHome address: lease, mortgage statement, or utility bill\nU.S. status: birth certificate or green card\n\nThose are the examples your results give — the agency will confirm what it accepts for your situation. Want the application link, or someone who can help you apply?",
+      "grade": "correct",
+      "explanation": "It gives all listed examples for identity, address, and U.S. status. Marital status was not explicitly requested in the question."
+    },
+    {
+      "question_id": "question-0022",
+      "question": "Who can help me apply for SNAP?",
+      "answer": "A few organizations from your results can help you apply for SNAP:\n\nHunger Free Colorado — statewide hotline at (855) 855-4626, with translation in 170+ languages\nCare and Share Food Bank — call or text \"SNAP\" to (719) 666-3849, free\nBenefits in Action — email info@benefitsinaction.org\nAurora Community Connection — (720) 975-0147\n\nAny of them can walk you through the application and documents. Want the online application link as well?",
+      "grade": "correct",
+      "explanation": "It names all four application-help organizations."
+    },
+    {
+      "question_id": "question-0023",
+      "question": "How can Benefits in Action help with my SNAP application?",
+      "answer": "Benefits in Action can work with you to gather the documents you need and fill out the forms — they serve families statewide, not just one area. You can reach them by email at info@benefitsinaction.org, and their page is here: https://www.benefitsinaction.org/application-assistance\n\nThey list Spanish among their languages. Want the online application link too, or help with anything else?",
+      "grade": "correct",
+      "explanation": "It covers document and form assistance, statewide service, Spanish availability, and the email address."
+    },
+    {
+      "question_id": "question-0024",
+      "question": "Can Aurora Community Connection help me apply if I don't live in Aurora?",
+      "answer": "Yes — your results note that Aurora Community Connection serves families statewide, not just in Aurora, so your location isn't a barrier. You can reach them at (720) 975-0147, and their page is here: https://www.auroracommunityconnection.com/contact-us-2/\n\nThey list Spanish among their languages. Want the online application link as well?",
+      "grade": "correct",
+      "explanation": "It answers the location question correctly and supplies the phone number and Spanish availability; the prior conversation already established application assistance."
+    },
+    {
+      "question_id": "question-0025",
+      "question": "Where can I get SNAP application help in another language?",
+      "answer": "For the widest language range, Hunger Free Colorado offers translation services in 170+ languages — their hotline is (855) 855-4626.\n\nIf Spanish works for you, Benefits in Action (info@benefitsinaction.org) and Aurora Community Connection ((720) 975-0147) both list Spanish. Want the online application link too?",
+      "grade": "correct",
+      "explanation": "It identifies Hunger Free Colorado's hotline and translation in more than 170 languages, plus Spanish-language alternatives."
+    },
+    {
+      "question_id": "question-0026",
+      "question": "Can I get free SNAP application help by text?",
+      "answer": "Yes — Care and Share Food Bank offers free SNAP application help by text. Just text the word \"SNAP\" to (719) 666-3849.\n\nWant the online application link as well, or anything else?",
+      "grade": "correct",
+      "explanation": "It identifies the free text service, organization, keyword, and phone number; the optional email is not needed to answer the text question."
+    },
+    {
+      "question_id": "question-0027",
+      "question": "Where does the SNAP page point me for other urgent help?",
+      "answer": "I don't have that link — the SNAP heads-up in your results mentions finding food, medical, shelter, and legal support, but it doesn't give me a URL or number to pass along, so I won't guess at one.\n\nWhat I can offer: your results page has an Additional Resources tab with food help (like Hunger Free Colorado's Food Resource Hotline at (855) 855-4626), and 211 can connect you to local food, shelter, and legal resources. Want me to point you to anything specific?",
+      "grade": "partially_correct",
+      "explanation": "It identifies the four types of support and offers alternatives, but does not direct the user to the resource list linked on the SNAP page."
+    },
+    {
+      "question_id": "question-0028",
+      "question": "What immediate food resources are listed for me?",
+      "answer": "Here are the food resources on your Additional Resources tab:\n\nBenefits in Action Food Delivery — delivers food boxes if you can't get food on your own; call (720) 221-8354\nHunger Free Colorado — Food Resource Hotline at (855) 855-4626 to find food near you\nMEAL — text \"MEAL\" to 274 488 for food resources near you\nTasty Food (Denver Youth Meals) — free meals for Denver youth ages 3–18, no ID needed; (720) 483-9177\n\nWant details on any of these, or the SNAP application link?",
+      "grade": "correct",
+      "explanation": "It names all four listed food resources."
+    },
+    {
+      "question_id": "question-0029",
+      "question": "How can I see resources for other needs?",
+      "answer": "Your Additional Resources tab has a link back to your screening questions, where you choose which kinds of resources to see. The categories you didn't pick include things like diapers and baby supplies, help with rent or utilities, legal help, job resources, dental care, and mental health support — adding one there brings back updated results.\n\nI can't promise what's in any of them, but if you tell me which need matters most, I'll point you to the right category to add.",
+      "grade": "correct",
+      "explanation": "It directs the user from Additional Resources back to the screening selection link to choose other resource categories."
+    },
+    {
+      "question_id": "question-0030",
+      "question": "Can I get food delivered if I can't get groceries on my own?",
+      "answer": "Yes — Benefits in Action Food Delivery brings food boxes with non-perishable and fresh foods to people who can't get food on their own. Call (720) 221-8354, or request a delivery here: https://signup.benefitsinaction.org/Foodintake/1\n\nWant anything else while you're at it?",
+      "grade": "correct",
+      "explanation": "It identifies the delivery service, eligible circumstance, food types, phone number, and request link."
+    }
+  ],
+  "metrics": {
+    "attempted": 30,
+    "answered": 30,
+    "graded": 30,
+    "counts": {
+      "correct": 20,
+      "partially_correct": 8,
+      "incorrect": 2,
+      "outdated": 0,
+      "unresolved": 0,
+      "browser_failure": 0,
+      "agent_failure": 0,
+      "judge_failure": 0
+    },
+    "accuracy": 0.6666666666666666,
+    "weighted_score": 0.8,
+    "browser_failure_rate": 0.0,
+    "grading_coverage": 1.0
+  },
+  "clarifications": [],
+  "fresh_chat_at_start_verified": true,
+  "reference_updates": [],
+  "investigations": [
+    {
+      "question_id": "question-0008",
+      "checked_at": "2026-10-27T21:26:30.021640+00:00",
+      "context_comparison": "The same newly created test household and unchanged results from this run were inspected.",
+      "current_sources": [
+        {
+          "url": "https://screener.myfriendben.org/co/edc04492-70ea-4975-b3d8-eb41cc747a11/results/benefits",
+          "text": "Denver Recycling and Trash Service Rebate\nApplication Time:\n10 minutes\nEstimated Savings:\n$252/year",
+          "quote": "Estimated Savings: $252/year"
+        }
+      ]
+    }
+  ],
+  "opencode_session_id": "ses_e80cb355affefG5a4U5jjF4CDr",
+  "completed_at": "2026-10-27T21:26:30.036668+00:00"
+}

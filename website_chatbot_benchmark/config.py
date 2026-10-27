@@ -10,9 +10,9 @@ from ruamel.yaml.error import YAMLError
 from .common import BenchmarkError, canonical_url, normalized, same_origin, write_json, write_text
 
 
-CONFIG_FILENAME = "benchmark.yaml"
-CONFIG_FILENAMES = (CONFIG_FILENAME, "benchmark.yml", "benchmark.json")
-EXAMPLE_CONFIG_FILENAME = "benchmark.example.yaml"
+CONFIG_FILENAME = "config.yaml"
+CONFIG_FILENAMES = (CONFIG_FILENAME, "config.yml", "benchmark.yaml", "benchmark.yml")
+EXAMPLE_CONFIG_FILENAME = "config.example.yaml"
 
 
 def default_config(directory="."):
@@ -62,7 +62,7 @@ def validate_clarifications(entries, target):
 @dataclass
 class Config:
     url: str = "http://localhost:5173/"
-    models: dict = field(default_factory=lambda: {"generation": None, "runner": None, "judge": None})
+    models: dict = field(default_factory=lambda: {"generation": None, "runner": None})
     question_limit: int | None = None
     page_limit: int | None = None
     instructions: list[str] = field(default_factory=list)
@@ -72,15 +72,15 @@ class Config:
     response_timeout_seconds: int = 120
     headed: bool = False
     interactive: bool = True
-    benchmark_file: str = "artifacts/benchmark.json"
-    results_directory: str = "artifacts/runs"
+    benchmark_file: str = "benchmark.json"
+    results_directory: str = "runs"
 
     def __post_init__(self):
         self._config_path = None
         self._clarification_target = self.url
 
     def to_dict(self):
-        return asdict(self)
+        return {key: value for key, value in asdict(self).items() if key not in {"benchmark_file", "results_directory"}}
 
     @property
     def config_path(self):
@@ -153,7 +153,8 @@ def load_config(arguments):
     validate_clarifications(config.clarifications, config._clarification_target)
     if not isinstance(config.models, dict) or config.models.keys() - {"generation", "runner", "judge"}:
         raise BenchmarkError("models must contain only generation, runner, and judge.")
-    config.models = {"generation": None, "runner": None, "judge": None} | config.models
+    # Accept legacy judge settings, but evaluation now belongs to the runner.
+    config.models = {"generation": None, "runner": None} | {key: value for key, value in config.models.items() if key != "judge"}
     for name in ("url", "question_limit", "page_limit", "agent_timeout_seconds", "browser_timeout_seconds", "response_timeout_seconds", "headed", "interactive"):
         value = getattr(arguments, name, None)
         if value is not None:

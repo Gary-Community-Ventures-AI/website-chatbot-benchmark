@@ -17,13 +17,14 @@ class Browser:
     def __init__(self, session, config):
         self.session = session
         self.config = config
+        self.directory = None
 
     def command(self, *arguments):
         command = ["agent-browser", "--session", self.session, "--json", *arguments]
         environment = os.environ.copy()
         environment["AGENT_BROWSER_DEFAULT_TIMEOUT"] = str(self.config.browser_timeout_seconds * 1000)
         try:
-            process = subprocess.run(command, capture_output=True, text=True, timeout=self.config.browser_timeout_seconds + 15, env=environment)
+            process = subprocess.run(command, cwd=self.directory, capture_output=True, text=True, timeout=self.config.browser_timeout_seconds + 15, env=environment)
         except (OSError, subprocess.TimeoutExpired) as error:
             raise BrowserError(f"agent-browser failed: {error}") from error
         try:

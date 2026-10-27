@@ -24,6 +24,8 @@ class Status(StrEnum):
     CORRECT = "correct"
     PARTIALLY_CORRECT = "partially_correct"
     INCORRECT = "incorrect"
+    OUTDATED = "outdated"
+    UNRESOLVED = "unresolved"
     BROWSER_FAILURE = "browser_failure"
     AGENT_FAILURE = "agent_failure"
     JUDGE_FAILURE = "judge_failure"

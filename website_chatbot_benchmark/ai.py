@@ -4,7 +4,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from .common import BenchmarkError, NeedsInput, normalized, now, parse_object, write_json
+from .common import BenchmarkError, NeedsInput, normalized, now, parse_object
 
 
 def api(method, path, data=None, timeout=60):
@@ -49,16 +49,22 @@ def resolve_models(config):
 
 
 class Model:
-    def __init__(self, config, stage, log_directory):
+    def __init__(self, config, stage, log_file):
         self.config = config
         self.model = config.models[stage]
-        self.log_directory = Path(log_directory)
+        self.stage = stage
+        self.log_file = Path(log_file)
         self.turn = 0
         self.clarifications = []
 
-    def log(self, payload):
-        self.turn += 1
-        write_json(self.log_directory / f"{self.turn:04}.json", {"time": now(), "model": self.model, **payload})
+    def log(self, payload, event="turn"):
+        if event == "turn":
+            self.turn += 1
+        record = {"time": now(), "event": event, "stage": self.stage, "turn": self.turn,
+                  "model": self.model, "session_id": getattr(self, "session_id", None), **payload}
+        self.log_file.parent.mkdir(parents=True, exist_ok=True)
+        with self.log_file.open("a") as handle:
+            handle.write(json.dumps(record, ensure_ascii=False, allow_nan=False) + "\n")
 
     def request(self, prompt):
         answered = set()
@@ -87,10 +93,10 @@ class Model:
                 raise BenchmarkError(f"The agent repeatedly requested an already-answered clarification: {question}")
             answer = self.config.clarification_answer(question)
             if answer is None:
-                write_json(self.log_directory / "pending-question.json", {"question": question, "prompt": prompt})
+                self.log({"question": question}, event="clarification_pending")
                 self.config.remember_clarification(question)
                 if not self.config.interactive or not sys.stdin.isatty():
-                    raise NeedsInput(f"The agent needs input: {question}\nFill in its answer under clarifications in {self.config.config_path} and retry. Details: {self.log_directory / 'pending-question.json'}")
+                    raise NeedsInput(f"The agent needs input: {question}\nFill in its answer under clarifications in {self.config.config_path} and retry. Log: {self.log_file}")
                 try:
                     answer = input(f"\nAgent question: {question}\nYour answer (saved to {self.config.config_path}): ").strip()
                 except EOFError as error:
@@ -101,21 +107,12 @@ class Model:
             answered.add(key)
             self.clarifications.append({"question": question, "answer": answer})
             prompt += "\nUser clarification (trusted): " + json.dumps(self.clarifications[-1])
-            (self.log_directory / "pending-question.json").unlink(missing_ok=True)
-
-
-class TextModel(Model):
-    def raw_request(self, prompt):
-        text = api("post", "/api/experimental/generate", {"model": model_ref(self.model), "prompt": prompt}, self.config.agent_timeout_seconds)
-        if not isinstance(text, dict) or not isinstance(text.get("text"), str):
-            raise BenchmarkError("Unexpected response from OpenCode text generation.")
-        self.log({"prompt": prompt, "response": text["text"]})
-        return parse_object(text["text"])
+            self.log(self.clarifications[-1], event="clarification_answered")
 
 
 class BrowserAgent(Model):
-    def __init__(self, config, stage, log_directory, browser_session):
-        super().__init__(config, stage, log_directory)
+    def __init__(self, config, stage, log_file, browser_session):
+        super().__init__(config, stage, log_file)
         root = "/tmp/opencode" if Path("/tmp/opencode").is_dir() else None
         self.workspace = tempfile.TemporaryDirectory(prefix="chatbot-benchmark-", dir=root)
         # Session-local rules, never written to the user's OpenCode configuration.
@@ -132,7 +129,7 @@ class BrowserAgent(Model):
         })
         self.session_id = session["id"]
         self.browser_session = browser_session
-        write_json(self.log_directory / "session.json", {"session_id": self.session_id, "browser_session": browser_session, "model": self.model})
+        self.log({"browser_session": browser_session}, event="session_started")
 
     def raw_request(self, prompt):
         task = Path(self.workspace.name) / "task.txt"

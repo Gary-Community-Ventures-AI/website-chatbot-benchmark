@@ -10,22 +10,26 @@ from .common import BenchmarkError, NeedsInput
 from .config import default_config, load_config
 from .generation import generate
 from .running import run
+from .viewer import view
 from .workspaces import COMMANDS, create_workspace, validate_name, workspace_config
 
 
 def parser():
     root = argparse.ArgumentParser(
         prog="benchmark",
-        usage="%(prog)s {new NAME | [NAME] {generate,run}} ...",
+        usage="%(prog)s {new NAME | view | [NAME] {generate,run}} ...",
         description="Generate grounded website chatbot benchmarks and run them through the browser.",
-        epilog="Use 'benchmark new NAME' to create NAME/benchmark.yaml, then 'benchmark NAME generate' or 'benchmark NAME run'.",
+        epilog="Use 'benchmark new NAME' to create benchmarks/NAME/config.yaml, then 'benchmark NAME generate' or 'benchmark NAME run'.",
     )
     commands = root.add_subparsers(dest="command", required=True)
     new = commands.add_parser("new", help="Create a named benchmark directory from the example config.")
-    new.add_argument("name", help="Name of the new benchmark directory in the current directory.")
-    for name, description in (("generate", "Crawl the site, verify a chatbot guide, and generate grounded questions."), ("run", "Ask benchmark questions in fresh chatbot chats and classify the answers.")):
+    new.add_argument("name", help="Name of the new project under benchmarks/.")
+    viewer = commands.add_parser("view", help="Open the local results viewer.")
+    viewer.add_argument("--port", type=int, default=5555, help="Local viewer port (default: 5555).")
+    viewer.add_argument("--open", dest="open_browser", action=argparse.BooleanOptionalAction, default=True, help="Open the viewer in your browser.")
+    for name, description in (("generate", "Explore the site and generate grounded questions and a chatbot guide."), ("run", "Ask benchmark questions, using fresh chats when convenient, and classify answers.")):
         command = commands.add_parser(name, help=description, description=description)
-        command.add_argument("--config", help="Benchmark YAML config; defaults to NAME/benchmark.yaml when named, otherwise benchmark.yaml. Also accepts .yml and legacy JSON. Never OpenCode config.")
+        command.add_argument("--config", help="Benchmark YAML config; defaults to benchmarks/NAME/config.yaml when named, otherwise config.yaml. Also accepts .yml and explicit legacy JSON config paths. Never OpenCode config.")
         command.add_argument("--url", help="Target site URL (run must match the generated benchmark origin).")
         questions = command.add_mutually_exclusive_group()
         questions.add_argument("--limit", dest="question_limit", type=int, help="Maximum number of questions; default: all factual coverage.")
@@ -34,7 +38,7 @@ def parser():
         pages.add_argument("--max-pages", dest="page_limit", type=int, help="Maximum number of pages to crawl; default: no limit.")
         pages.add_argument("--all-pages", action="store_true", help="Override a configured page limit.")
         command.add_argument("--model", help="Override all models with provider/model[#variant].")
-        for stage in ("generation", "runner", "judge"):
+        for stage in ("generation", "runner"):
             command.add_argument(f"--{stage}-model", help=f"Override only the {stage} model (takes precedence over --model).")
         command.add_argument("--instructions", action="append", default=[], help="Additional trusted instructions; repeatable.")
         command.add_argument("--instructions-file", action="append", default=[], help="Read additional trusted instructions from a file; repeatable.")
@@ -57,6 +61,12 @@ def parse_arguments(argv=None):
         name = validate_name(argv.pop(0))
     root = parser()
     arguments = root.parse_args(argv)
+    if arguments.command == "view":
+        if name is not None:
+            root.error("Use 'benchmark view'; open project results from the viewer.")
+        if not 1 <= arguments.port <= 65535:
+            root.error("--port must be between 1 and 65535.")
+        return arguments
     if arguments.command != "new":
         arguments.config_required = arguments.config is not None or name is not None
     if name is not None:
@@ -74,6 +84,9 @@ def main():
         arguments = parse_arguments()
         if arguments.command == "new":
             create_workspace(arguments.name)
+            return
+        if arguments.command == "view":
+            view(arguments.port, arguments.open_browser)
             return
         config = load_config(arguments)
         for executable in ("opencode", "agent-browser"):

@@ -1,0 +1,66 @@
+# CLI flags override these settings; this file never changes OpenCode's config.
+
+# Website to crawl and test. Navigation stays on this exact scheme, host and port.
+url: http://localhost:5173/
+
+# Models use provider/model or provider/model#variant. Use null to inherit
+# your OpenCode default. --model overrides all stages; stage-specific flags win.
+models:
+  # Discovers the chatbot, verifies its operating guide, and generates questions.
+  generation: "openai/gpt-6.1-sol"
+  # Captures chatbot replies, then evaluates them and investigates stale references.
+  runner: "openai/gpt-6.1-terra"
+
+# Maximum questions to generate or run. null aims to cover all distinct,
+# verifiable facts on reachable pages. Override with --limit or --all-questions.
+question_limit: null
+
+# Maximum pages to crawl during generation. null means no page limit.
+# Unreachable content and configured limits are recorded in the coverage manifest.
+page_limit: null
+
+# Additional trusted guidance for the agents. Add separate list entries as needed.
+# CLI --instructions and --instructions-file append to this list.
+instructions:
+  - >-
+    Go through the screen and create a household that is eligible for all of the paths.
+    Then use the information on the results screen to generate the questions for the chatbot.
+    You should go through all paths on the results page to generate questions.
+
+# Clarifications are ONLY for execution blockers the agent cannot resolve itself,
+# or observed prerequisites that would prevent it from proceeding safely.
+# Example: it cannot find the chatbot after checking navigation and chat launchers.
+# Not for optional preferences, hypothetical obstacles, benchmark answers or scores.
+# Questions and answers are saved automatically and reused on later generate/run
+# commands. Leave an answer null to fill it in before retrying.
+# target_url scopes each decision to that website's origin; do not store secrets.
+# Example entry:
+#   - question: "I checked the navigation and launchers but cannot find the chatbot. Where is it?"
+#     answer: "Open Help, then select Chat with us."
+clarifications:
+  - question: The onboarding at http://localhost:5173/landing requires checking “I have read and agree to the Privacy Policy and the Terms of Use.” before “Get started.” I selected English and inspected this screen but have not accepted the agreement. Do you authorize accepting it for the fictional adult household so I can continue?
+    answer: yes
+    target_url: http://localhost:5173/
+
+# Maximum time for each OpenCode turn, in seconds (including browser work).
+agent_timeout_seconds: 600
+
+# Maximum time for each direct agent-browser command, in seconds.
+browser_timeout_seconds: 60
+
+# Maximum time to wait for a completed chatbot reply, in seconds.
+response_timeout_seconds: 120
+
+# Show the browser window instead of running headlessly. Override with --headed.
+headed: false
+
+# Allow agents to ask about execution blockers in an interactive terminal.
+# Without a terminal, required input is saved and the command exits with code 3.
+interactive: true
+
+# Output paths resolve relative to this config's directory. Artifacts stay JSON.
+# Generated questions, reference answers, sources and the verified chatbot guide.
+benchmark_file: benchmark.json
+
+# Each run saves a separate timestamped JSON file with answers, scores and failures.
+results_directory: runs

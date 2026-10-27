@@ -8,10 +8,8 @@ url: http://localhost:5173/
 models:
   # Discovers the chatbot, verifies its operating guide, and generates questions.
   generation: "openai/gpt-6.1-sol"
-  # Operates the chatbot using the generated guide; does not see reference answers.
+  # Captures chatbot replies, then evaluates them and investigates stale references.
   runner: "openai/gpt-6-luna"
-  # Classifies each captured chatbot answer against its reference and evidence.
-  judge: "openai/gpt-6-luna"
 
 # Maximum questions to generate or run. null aims to cover all distinct,
 # verifiable facts on reachable pages. Override with --limit or --all-questions.
@@ -60,7 +58,7 @@ interactive: true
 
 # Output paths resolve relative to this config's directory. Artifacts stay JSON.
 # Generated questions, reference answers, sources and the verified chatbot guide.
-benchmark_file: artifacts/benchmark.json
+benchmark_file: benchmark.json
 
 # Each run saves a separate timestamped JSON file with answers, scores and failures.
-results_directory: artifacts/runs
+results_directory: runs
