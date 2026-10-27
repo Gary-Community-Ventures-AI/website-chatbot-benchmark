@@ -26,6 +26,8 @@ import {
 } from "./results";
 import "./style.css";
 
+const staticReport = import.meta.env.MODE === "pages";
+
 function Badge({ grade }: { grade: string }) {
   return (
     <span
@@ -159,6 +161,7 @@ function Question({
 
 function App() {
   const [runs, setRuns] = useState<Run[]>([]);
+  const [projects, setProjects] = useState<string[]>([]);
   const [selected, setSelected] = useState("");
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
@@ -171,6 +174,7 @@ function App() {
   const request = useRef<AbortController | null>(null);
   const run = runs.find((item) => item.key === selected);
   const groupedRuns = new Map<string, Run[]>();
+  projects.forEach((project) => groupedRuns.set(project, []));
   for (const item of runs) {
     const group = groupedRuns.get(item.project) ?? [];
     group.push(item);
@@ -186,13 +190,20 @@ function App() {
     request.current = controller;
     setLoading(true);
     try {
-      const response = await fetch("/api/runs", {
-        signal: controller.signal,
-        cache: "no-store",
-      });
+      const response = await fetch(
+        staticReport
+          ? `${import.meta.env.BASE_URL}data/runs.json`
+          : "/api/runs",
+        {
+          signal: controller.signal,
+          cache: "no-store",
+        },
+      );
       if (!response.ok)
         throw new Error(
-          "Could not load local results. Start the server with benchmark view.",
+          staticReport
+            ? "Could not load the published report data. Try refreshing the page."
+            : "Could not load local results. Start the server with benchmark view.",
         );
       const data = await response.json();
       const loaded: Run[] = data.runs.map(
@@ -214,6 +225,11 @@ function App() {
         },
       );
       const all = [...loaded, ...imported.current.values()];
+      setProjects(
+        Array.isArray(data.projects)
+          ? data.projects
+          : [...new Set(loaded.map((item) => item.project))],
+      );
       all.sort((a, b) => b.date.localeCompare(a.date));
       setRuns(all);
       setSelected((previous) =>
@@ -234,9 +250,11 @@ function App() {
 
   useEffect(() => {
     void refreshRuns();
-    const interval = window.setInterval(() => void refreshRuns(), 10000);
+    const interval = staticReport
+      ? null
+      : window.setInterval(() => void refreshRuns(), 10000);
     return () => {
-      window.clearInterval(interval);
+      if (interval !== null) window.clearInterval(interval);
       request.current?.abort();
     };
   }, [refreshRuns]);
@@ -325,7 +343,7 @@ function App() {
           benchmark<span className="brand-dot">.</span>
         </a>
         <div className="sidebar-label">
-          WORKSPACE <span>LOCAL</span>
+          WORKSPACE <span>{staticReport ? "PUBLISHED" : "LOCAL"}</span>
         </div>
         <button
           className="open-button"
@@ -377,11 +395,13 @@ function App() {
             ))}
         </nav>
         {!runs.length && (
-          <p className="sidebar-empty">Local project runs will appear here.</p>
+          <p className="sidebar-empty">Project runs will appear here.</p>
         )}
         <div className="sidebar-footer">
           <span className="local-dot" />
-          Local server · refreshes every 10s
+          {staticReport
+            ? "Updated when committed results are published"
+            : "Local server · refreshes every 10s"}
         </div>
       </aside>
       <main>
@@ -421,8 +441,7 @@ function App() {
               <span className="eyebrow">A CLEARER VIEW OF YOUR BENCHMARKS</span>
               <h1>Every answer. In perspective.</h1>
               <p>
-                Local project runs appear automatically. Explore answers,
-                grades,
+                Project runs appear automatically. Explore answers, grades,
                 <br />
                 and the evidence behind each evaluation.
               </p>
@@ -432,7 +451,7 @@ function App() {
                 disabled={loading}
               >
                 <RefreshCw size={17} />
-                Refresh local runs
+                Refresh runs
               </button>
               <span className="drop-hint">
                 Run a benchmark from this workspace to see its results here

@@ -7,3 +7,4 @@ logs/
 frontend/node_modules/
 frontend/dist/
 frontend/*.tsbuildinfo
+frontend/public/data/
