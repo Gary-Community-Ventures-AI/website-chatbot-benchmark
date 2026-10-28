@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .ai import resolve_models
-from .common import BenchmarkError, NeedsInput
+from .common import BenchmarkError, NeedsInput, read_json
 from .config import default_config, load_config
 from .generation import generate
 from .running import run
@@ -51,6 +51,8 @@ def parser():
         command.add_argument("--force", action="store_true", help="Explicitly allow replacing the selected output file.")
         if name == "run":
             command.add_argument("--benchmark", help="Generated benchmark JSON; default: config benchmark_file.")
+            command.add_argument("--resume", nargs="?", const="latest", metavar="RUN_FILE", help="Resume a run; omit the filename to select the most recent run.")
+            command.add_argument("--prompt", help="Additional instructions for this run or resume, without saving them to project config.")
     return root
 
 
@@ -98,7 +100,22 @@ def main():
         else:
             timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
             output = arguments.output or str(Path(config.results_directory) / f"{timestamp}.json")
-            run(config, arguments.benchmark or config.benchmark_file, output, arguments.force, arguments.url is not None)
+            resume = arguments.resume is not None
+            if resume:
+                if arguments.output or arguments.force:
+                    raise BenchmarkError("--resume updates the selected run file; do not combine it with --output or --force.")
+                if arguments.resume == "latest":
+                    candidates = sorted(Path(config.results_directory).glob("*.json"), key=lambda path: path.stat().st_mtime, reverse=True)
+                    if not candidates:
+                        raise BenchmarkError("No previous run was found to resume.")
+                    output = str(max(candidates, key=lambda path: read_json(path).get("started_at", "")))
+                else:
+                    path = Path(arguments.resume).expanduser()
+                    if not path.is_file() and len(path.parts) == 1:
+                        path = Path(config.results_directory) / path
+                    output = str(path)
+            run(config, arguments.benchmark or config.benchmark_file, output, arguments.force, arguments.url is not None,
+                resume=resume, additional_prompt=arguments.prompt)
     except NeedsInput as error:
         print(f"Input required: {error}", file=sys.stderr)
         raise SystemExit(3) from error

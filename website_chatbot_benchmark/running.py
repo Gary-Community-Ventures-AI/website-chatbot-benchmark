@@ -81,9 +81,12 @@ def apply_reference_updates(path, original_hash, updates):
     write_json(path, benchmark)
 
 
-def run(config, benchmark_path, output, force=False, url_override=False):
+def run(config, benchmark_path, output, force=False, url_override=False, resume=False, additional_prompt=None):
     output = Path(output)
-    if output.exists() and not force:
+    previous = read_json(output) if resume else None
+    if resume and (not isinstance(previous, dict) or previous.get("schema_version") != 1 or previous.get("status") not in {"failed", "interrupted", "running"}):
+        raise BenchmarkError("Resume requires an unfinished run report.")
+    if output.exists() and not force and not resume:
         raise BenchmarkError(f"Output already exists: {output}. Choose --output or explicitly use --force.")
     benchmark = read_json(benchmark_path)
     if not isinstance(benchmark, dict) or benchmark.get("schema_version") != 1 or benchmark.get("status") != "ready":
@@ -101,10 +104,20 @@ def run(config, benchmark_path, output, force=False, url_override=False):
     ids = [question.get("id") for question in questions]
     if not all(isinstance(item, str) and item for item in ids) or len(set(ids)) != len(ids):
         raise BenchmarkError("Every question must have a unique nonempty id.")
-    if config.question_limit is not None:
+    benchmark_hash = hashlib.sha256(Path(benchmark_path).read_bytes()).hexdigest()
+    if resume:
+        if previous.get("benchmark_id") != benchmark["id"] or previous.get("benchmark_sha256") != benchmark_hash:
+            raise BenchmarkError("The benchmark has changed since this run started; start a new run instead of resuming.")
+        planned = previous.get("planned_questions")
+        if type(planned) is not int or not 1 <= planned <= len(questions):
+            raise BenchmarkError("Saved run has an invalid question count.")
+        if not isinstance(previous.get("opencode_session_id"), str):
+            raise BenchmarkError("Saved run has no OpenCode session to resume.")
+        questions = questions[:planned]
+    elif config.question_limit is not None:
         questions = questions[:config.question_limit]
     by_id = {question["id"]: question for question in questions}
-    identifier = uuid4().hex
+    identifier = previous["id"] if resume else uuid4().hex
     log_file = output.parent / "logs" / f"run-{identifier}.jsonl"
     browser_session = f"benchmark-run-{identifier}"
     browser = Browser(browser_session, config)
@@ -112,12 +125,42 @@ def run(config, benchmark_path, output, force=False, url_override=False):
     report = {
         "schema_version": 1, "id": identifier, "started_at": now(), "updated_at": now(),
         "status": "running", "target_url": target, "benchmark_id": benchmark["id"],
-        "benchmark_sha256": hashlib.sha256(Path(benchmark_path).read_bytes()).hexdigest(),
+        "benchmark_sha256": benchmark_hash,
         "config": config.to_dict(), "planned_questions": len(questions), "results": [],
         "metrics": metrics([]), "clarifications": [],
         "fresh_chat_at_start_verified": False,
         "reference_updates": [], "investigations": [],
     }
+    if resume:
+        report = previous
+        restored = []
+        seen = set()
+        for saved in report["results"]:
+            question_id = saved.get("question_id")
+            if question_id not in by_id or question_id in seen:
+                raise BenchmarkError("Saved run contains unknown or duplicate question IDs.")
+            seen.add(question_id)
+            # Unanswered failures are retryable; captured answers and finished grades are retained.
+            if saved.get("answer") is None:
+                continue
+            question = by_id[question_id]
+            status = saved.get("grade", saved.get("status"))
+            if status not in {item.value for item in Status} or not isinstance(saved["answer"], str):
+                raise BenchmarkError("Saved run contains an invalid answer or grade.")
+            restored.append({"question_id": question_id, "question": saved["question"], "answer": saved["answer"],
+                             "status": status, "reason": saved.get("explanation", saved.get("reason", "")),
+                             "score": SCORES.get(status), "expected_answer": question["expected_answer"],
+                             "key_points": question["key_points"], "evidence": question["evidence"]})
+        report.setdefault("resume_history", []).append({
+            "resumed_at": now(), "previous_status": report["status"], "previous_error": report.get("error"),
+            "saved_answers": len(restored), "prompt": additional_prompt,
+        })
+        report["results"] = restored
+        report["status"] = "running"
+        report.pop("error", None)
+        report.pop("completed_at", None)
+        report.setdefault("reference_updates", [])
+        report.setdefault("investigations", [])
 
     def save():
         report["updated_at"] = now()
@@ -150,15 +193,39 @@ def run(config, benchmark_path, output, force=False, url_override=False):
 
     save()
     try:
-        runner = BrowserAgent(config, "runner", log_file, browser_session)
+        runner = BrowserAgent(config, "runner", log_file, browser_session,
+                              session_id=report["opencode_session_id"] if resume else None)
+        if resume:
+            runner.clarifications = report.get("clarifications", [])
         browser.directory = runner.workspace.name
         report["opencode_session_id"] = runner.session_id
         save()
+        if resume:
+            print(f"Resuming with {len(report['results'])} saved answers in the original OpenCode session.", flush=True)
         print(f"Runner is working through and evaluating {len(questions)} questions with {config.models['runner']}", flush=True)
         public_questions = [{"id": question["id"], "question": question["question"]} for question in questions]
-        prompt = runner_prompt(config, browser_session, benchmark["guide"], public_questions)
-        completed = set()
-        while True:
+        completed = {result["question_id"] for result in report["results"]}
+        pending_questions = [question for question in public_questions if question["id"] not in completed]
+        resume_context = ""
+        if resume:
+            resume_context = (
+                "\nRESUME of the SAME run, not a new run. Keep all previously captured replies immutable. "
+                "Use this OpenCode session's history to recover exact replies from the interrupted turn "
+                "before submitting more questions. Do not resend a question whose reply can be recovered. "
+                "Return recovered outcomes for pending IDs in the same run JSON format, then continue "
+                "the rest. Previously saved IDs must not be returned again: " + str(sorted(completed)) + ". "
+                "The previous browser may have been closed. Restore the same household/profile and "
+                "conversation if available, rather than resetting solely because this is a resume. "
+                "If recovery requires a new browser/chat, record that discontinuity in your explanation, "
+                "verify a fresh context and do not pretend missing conversational history is present. "
+                "Do not fabricate replies or silently rewrite dependent questions. Return completed "
+                "batches regularly so they can be saved before the turn timeout."
+            )
+        extra = "\nAdditional trusted user instructions for this invocation: " + additional_prompt if additional_prompt else ""
+        prompt = runner_prompt(config, browser_session, benchmark["guide"], pending_questions) + resume_context + extra
+        while len(completed) < len(questions):
+            report["phase"] = "capture"
+            save()
             response = runner.request(prompt)
             if response.get("kind") != "run" or type(response.get("done")) is not bool or not isinstance(response.get("results"), list):
                 raise BenchmarkError("Runner must return a run result containing outcomes and a done flag.")
@@ -184,7 +251,7 @@ def run(config, benchmark_path, output, force=False, url_override=False):
                 "Do not repeat completed questions or reset an already established run conversation. "
                 "Recover reasonable operational errors before skipping questions. Return the same run "
                 "JSON shape with only new outcomes and done=true when finished. Remaining questions: "
-                + str(pending)
+                + str(pending) + resume_context + extra
             )
         for question in questions:
             if question["id"] not in completed:
@@ -210,11 +277,21 @@ def run(config, benchmark_path, output, force=False, url_override=False):
                 "benchmark_created_at": benchmark.get("created_at"),
                 "reference_status": question.get("reference_status", "current"),
             })
-        evaluated = set()
+        evaluated = {result["question_id"] for result in report["results"]
+                     if result["status"] in {*SCORES, Status.OUTDATED, Status.UNRESOLVED}}
         while len(evaluated) < len(captured):
             pending_cases = [case for case in cases if case["question_id"] not in evaluated]
             print(f"Evaluating {len(pending_cases)} captured answers and investigating discrepancies ...", flush=True)
-            response = runner.request(evaluation_prompt(config, browser_session, pending_cases))
+            report["phase"] = "evaluation"
+            save()
+            evaluation_resume = (
+                "\nThis is a resumed run. Keep previously saved chatbot replies and completed grades unchanged. "
+                "Evaluate only the pending cases supplied here. Use session history to recover earlier "
+                "investigation observations; restore the same website profile/context if the browser "
+                "was closed. Return evaluation JSON, not run/capture JSON."
+                if resume else ""
+            )
+            response = runner.request(evaluation_prompt(config, browser_session, pending_cases) + evaluation_resume + extra)
             if response.get("kind") != "evaluation" or type(response.get("done")) is not bool or not isinstance(response.get("results"), list):
                 raise BenchmarkError("Evaluator must return evaluation outcomes and a done flag.")
             if not response["results"]:
@@ -251,6 +328,7 @@ def run(config, benchmark_path, output, force=False, url_override=False):
         for update in report["reference_updates"]:
             update["applied"] = update["proposed_expected_answer"] is not None
         report["status"] = "completed"
+        report["phase"] = "completed"
         report["completed_at"] = now()
         save()
         summary = report["metrics"]

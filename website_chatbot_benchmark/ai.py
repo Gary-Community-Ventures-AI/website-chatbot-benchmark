@@ -111,11 +111,17 @@ class Model:
 
 
 class BrowserAgent(Model):
-    def __init__(self, config, stage, log_file, browser_session):
+    def __init__(self, config, stage, log_file, browser_session, session_id=None):
         super().__init__(config, stage, log_file)
         root = "/tmp/opencode" if Path("/tmp/opencode").is_dir() else None
         self.workspace = tempfile.TemporaryDirectory(prefix="chatbot-benchmark-", dir=root)
         # Session-local rules, never written to the user's OpenCode configuration.
+        if session_id is not None:
+            api("post", f"/api/session/{session_id}/move", {"directory": self.workspace.name})
+            self.session_id = session_id
+            self.browser_session = browser_session
+            self.log({"browser_session": browser_session}, event="session_resumed")
+            return
         session = api("post", "/api/session", {
             "title": f"Website chatbot benchmark: {stage}",
             "location": {"directory": self.workspace.name},
